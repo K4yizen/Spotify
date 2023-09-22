@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model albums {
+  id         Int     @id @default(autoincrement())
+  title      String  @db.VarChar(250)
+  artist     Int
+  albumCover String  @db.VarChar(500)
+  genres_id  Int
+  genres     genres  @relation(fields: [genres_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_albums_genres1")
+  songs      songs[]
+
+  @@index([genres_id], map: "fk_albums_genres1_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model artists {
+  userId            Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(50)
+  users_id          Int
+  artistCover       String              @db.VarChar(45)
+  users             users               @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_artists_users1")
+  artists_has_songs artists_has_songs[]
+  follow            follow[]
+
+  @@index([users_id], map: "fk_artists_users1_idx")
+}
+
+model artists_has_songs {
+  artists_userId Int
+  songs_id       Int
+  artists        artists @relation(fields: [artists_userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_artists_has_songs_artists1")
+  songs          songs   @relation(fields: [songs_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_artists_has_songs_songs1")
+
+  @@id([artists_userId, songs_id])
+  @@index([artists_userId], map: "fk_artists_has_songs_artists1_idx")
+  @@index([songs_id], map: "fk_artists_has_songs_songs1_idx")
+}
+
+model follow {
+  users_id       Int
+  artists_userId Int
+  artists        artists @relation(fields: [artists_userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_has_artists_artists1")
+  users          users   @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_has_artists_users1")
+
+  @@id([users_id, artists_userId])
+  @@index([artists_userId], map: "fk_users_has_artists_artists1_idx")
+  @@index([users_id], map: "fk_users_has_artists_users1_idx")
+}
+
+model genres {
+  id               Int      @id @default(autoincrement())
+  categoryName     String   @db.VarChar(50)
+  categoryColor    String   @db.VarChar(45)
+  categoryPictures String   @db.VarChar(45)
+  albums           albums[]
+  songs            songs[]
+}
+
+model like {
+  users_id Int
+  songs_id Int
+  songs    songs @relation(fields: [songs_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_has_songs_songs1")
+  users    users @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_has_songs_users1")
+
+  @@id([users_id, songs_id])
+  @@index([songs_id], map: "fk_users_has_songs_songs1_idx")
+  @@index([users_id], map: "fk_users_has_songs_users1_idx")
+}
+
+model playlistSongs {
+  id                      Int                       @id @default(autoincrement())
+  songId                  Int
+  playlistId              Int
+  playlistOrder           Int
+  songs_has_playlistSongs songs_has_playlistSongs[]
+}
+
+model playlists {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(50)
+  dateCreated         DateTime              @db.DateTime(0)
+  users_id            Int
+  playlistCover       String                @db.VarChar(45)
+  users               users                 @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_playlists_users1")
+  playlists_has_users playlists_has_users[]
+
+  @@index([users_id], map: "fk_playlists_users1_idx")
+}
+
+model playlists_has_users {
+  playlists_id Int
+  users_id     Int
+  playlists    playlists @relation(fields: [playlists_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_playlists_has_users_playlists1")
+  users        users     @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_playlists_has_users_users1")
+
+  @@id([playlists_id, users_id])
+  @@index([playlists_id], map: "fk_playlists_has_users_playlists1_idx")
+  @@index([users_id], map: "fk_playlists_has_users_users1_idx")
+}
+
+model songs {
+  id                      Int                       @id @default(autoincrement())
+  title                   String                    @db.VarChar(250)
+  artist                  Int
+  album                   Int
+  duration                String                    @db.VarChar(8)
+  path                    String                    @db.VarChar(500)
+  albumOrder              Int
+  plays                   Int
+  albums_id               Int
+  genres_id               Int
+  songCover               String                    @db.VarChar(45)
+  artists_has_songs       artists_has_songs[]
+  like                    like[]
+  albums                  albums                    @relation(fields: [albums_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_songs_albums1")
+  genres                  genres                    @relation(fields: [genres_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_songs_genres1")
+  songs_has_playlistSongs songs_has_playlistSongs[]
+
+  @@index([albums_id], map: "fk_songs_albums1_idx")
+  @@index([genres_id], map: "fk_songs_genres1_idx")
+}
+
+model songs_has_playlistSongs {
+  songs_id         Int
+  playlistSongs_id Int
+  playlistSongs    playlistSongs @relation(fields: [playlistSongs_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_songs_has_playlistSongs_playlistSongs1")
+  songs            songs         @relation(fields: [songs_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_songs_has_playlistSongs_songs")
+
+  @@id([songs_id, playlistSongs_id])
+  @@index([playlistSongs_id], map: "fk_songs_has_playlistSongs_playlistSongs1_idx")
+  @@index([songs_id], map: "fk_songs_has_playlistSongs_songs_idx")
+}
+
+model users {
+  id                  Int                   @id @default(autoincrement())
+  username            String                @db.VarChar(25)
+  firstname           String                @db.VarChar(50)
+  lastname            String                @db.VarChar(50)
+  email               String                @db.VarChar(200)
+  password            String                @db.VarChar(32)
+  signup_date         DateTime              @db.DateTime(0)
+  profile_pic         String                @db.VarChar(500)
+  artists             artists[]
+  follow              follow[]
+  like                like[]
+  playlists           playlists[]
+  playlists_has_users playlists_has_users[]
+}
