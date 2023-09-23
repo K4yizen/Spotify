@@ -14,9 +14,10 @@ model albums {
   albumCover String  @db.VarChar(500)
   genres_id  Int
   genres     genres  @relation(fields: [genres_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_albums_genres1")
-  songs      songs[]
+  songs      songs_has_albums[]
 
   @@index([genres_id], map: "fk_albums_genres1_idx")
+
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -119,12 +120,22 @@ model songs {
   songCover               String                    @db.VarChar(45)
   artists_has_songs       artists_has_songs[]
   like                    like[]
-  albums                  albums                    @relation(fields: [albums_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_songs_albums1")
+  albums                  songs_has_albums[]
   genres                  genres                    @relation(fields: [genres_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_songs_genres1")
   songs_has_playlistSongs songs_has_playlistSongs[]
 
   @@index([albums_id], map: "fk_songs_albums1_idx")
   @@index([genres_id], map: "fk_songs_genres1_idx")
+}
+
+model songs_has_albums {
+  songs            songs  @relation(fields: [songs_id], references: [id])
+  songs_id         Int
+  albums           albums @relation(fields: [albums_id], references: [id])
+  albums_id        Int 
+  order            Int
+
+  @@id([songs_id, albums_id])
 }
 
 model songs_has_playlistSongs {
