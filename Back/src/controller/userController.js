@@ -12,11 +12,11 @@ async function getUsers(req, res) {
     });
   }
 }
- 
+
 async function createUser(req, res) {
   try {
     // Récupérez les données de la demande POST
-    const { username, firstname, lastname, email, password } = req.body;
+    // const { username, firstname, lastname, email, password } = req.body;
 
     // Créez un nouvel utilisateur dans la base de données
     const newUser = await users.create({

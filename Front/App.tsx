@@ -6,6 +6,7 @@ import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { Ionicons, Feather, MaterialIcons } from "@expo/vector-icons";
 import { SearchBar } from "react-native-screens";
 import Library from "./components/Library";
+// import audioPlayer from "./components/audioPlayer"
 
 const Tab = createBottomTabNavigator();
 
