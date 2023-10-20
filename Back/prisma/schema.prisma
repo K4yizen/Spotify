@@ -12,7 +12,7 @@ model albums {
   title      String             @db.VarChar(250)
   albumCover String             @db.VarChar(500)
   genres_id  Int
-  genres     genres             @relation(fields: [genres_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_albums_genres1")
+  genres     genres             @relation(fields: [genres_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_albums_genres1")
   songs      songs_has_albums[]
 
   artists       artists? @relation(fields: [artistsUserId], references: [userId])
@@ -110,7 +110,7 @@ model songs {
   artists_has_songs       artists_has_songs[]
   like                    like[]
   albums                  songs_has_albums[]
-  genres                  genres                    @relation(fields: [genres_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_songs_genres1")
+  genres                  genres                    @relation(fields: [genres_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_songs_genres1")
   songs_has_playlistSongs songs_has_playlistSongs[]
 }
 

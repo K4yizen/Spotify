@@ -5,10 +5,10 @@ async function getSongs(req, res) {
     const songsList = await songs.findMany();
     res.json(songsList);
   } catch (err) {
-    console.error("Erreur lors de la création de l'utilisateur :", err);
+    console.error("Erreur lors de la création de la musique :", err);
     res.status(500).json({
       message:
-        "Une erreur s'est produite lors de la création de l'utilisateur.",
+        "Une erreur s'est produite lors de la création de la musique.",
     });
   }
 }
@@ -22,10 +22,10 @@ async function getOneSongs(req, res) {
     });
     res.json(songsList);
   } catch (err) {
-    console.error("Erreur lors de la création de l'utilisateur :", err);
+    console.error("Erreur lors de la création de la musique :", err);
     res.status(500).json({
       message:
-        "Une erreur s'est produite lors de la création de l'utilisateur.",
+        "Une erreur s'est produite lors de la création de la musique.",
     });
   }
 }
@@ -61,10 +61,10 @@ async function createSongs(req, res) {
     });
     res.status(201).json(newSong);
   } catch (err) {
-    console.error("Erreur lors de la création de l'utilisateur :", err);
+    console.error("Erreur lors de la création de la musique :", err);
     res.status(500).json({
       message:
-        "Une erreur s'est produite lors de la création de l'utilisateur.",
+        "Une erreur s'est produite lors de la création de la musique.",
     });
   }
 }

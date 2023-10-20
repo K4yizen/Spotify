@@ -4,37 +4,8 @@ async function getUsers(req, res) {
   try {
     const usersList = await users.findMany();
     res.status(201).json(usersList);
-  } catch (error) {
-    console.error("Erreur lors de la création de l'utilisateur :", error);
-    res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de la création de l'utilisateur.",
-    });
-  }
-}
-
-async function createUser(req, res) {
-  try {
-    // Récupérez les données de la demande POST
-    // const { username, firstname, lastname, email, password } = req.body;
-
-    // Créez un nouvel utilisateur dans la base de données
-    const newUser = await users.create({
-      data: {
-        username,
-        firstname,
-        lastname,
-        email,
-        password,
-        signup_date: new Date(),
-        profile_pic: "",
-      },
-    });
-
-    // Répondez avec le nouvel utilisateur créé
-    res.status(201).json(newUser);
-  } catch (error) {
-    console.error("Erreur lors de la création de l'utilisateur :", error);
+  } catch (err) {
+    console.error("Erreur lors de la création de l'utilisateur :", err);
     res.status(500).json({
       message:
         "Une erreur s'est produite lors de la création de l'utilisateur.",
@@ -51,6 +22,32 @@ async function getOneUser(req, res) {
     });
     res.status(201).json(user);
   } catch (err) {
+    console.error("Erreur lors de la création de l'utilisateur :", err);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la création de l'utilisateur.",
+    });
+  }
+}
+
+async function createUser(req, res) {
+  try {
+    const { username, firstname, lastname, email, password } = req.body;
+
+    const newUser = await users.create({
+      data: {
+        username,
+        firstname,
+        lastname,
+        email,
+        password,
+        signup_date: new Date(),
+        profile_pic: "",
+      },
+    });
+
+    res.status(201).json(newUser);
+  } catch (error) {
     console.error("Erreur lors de la création de l'utilisateur :", error);
     res.status(500).json({
       message:
@@ -58,6 +55,8 @@ async function getOneUser(req, res) {
     });
   }
 }
+
+
 
 async function updateOneUser(req, res) {
     try {
