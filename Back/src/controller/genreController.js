@@ -1,4 +1,5 @@
-const { genres } = require("../../prisma/client")
+const { genres } = require("../../prisma/client");
+const { getGenreById } = require("../model/genreManager");
 
 async function getGenres(req, res) {
     try {
@@ -15,20 +16,17 @@ async function getGenres(req, res) {
 
   async function getOneGenre(req, res) {
     try {
-      const genre = await genres.findUnique({
-        where : {
-            id : parseInt(req.params.id)
-        }
-      });
-      res.status(201).json(genre);
-    } catch (error) {
-      console.error("Erreur lors de la récupération du genre :", error);
+      const { status, data } = await getGenreById(req.params.id);
+      res.status(status).send(data);
+    } catch (err) {
       res.status(500).json({
         message:
-          "Une erreur s'est produite lors de la récupération du genre",
+          "Une erreur s'est produite lors de l'obtention du genre.",
+        err,
       });
     }
   }
+  
 
 
   async function deleteGenre(req, res) {

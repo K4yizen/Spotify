@@ -1,57 +1,43 @@
-const { artists } = require("../../prisma/client")
-
+const { artists } = require("../../prisma/client");
+const { createNewArtist, getArtistById } = require("../model/artistsManager");
 
 async function createArtist(req, res) {
-  const { name, artistCover, userId } = req.body;
-
   try {
-    const newArtist = await artists.create({
-      data: {
-        name: name,
-        artistCover: artistCover,
-        users: {
-          connect: { id: userId}
-        }
-      }
-    });
-
-    res.status(201).json(newArtist);
+    const { status, data } = await createNewArtist(req.body);
+    res.status(status).send(data);
   } catch (err) {
-    console.error("Erreur lors de la création de l'artiste :", err);
     res.status(500).json({
-      message: "Une erreur s'est produite lors de la création de l'artiste.",
+      message:
+        "Une erreur s'est produite lors de la création de l'utilisateur.",
+      err,
     });
   }
 }
 
 async function getArtists(req, res) {
-    try {
-      const artistsList = await artists.findMany();
-      res.status(201).json(artistsList);
-    } catch (err) {
-      console.error("Erreur lors de la création de l'utilisateur :", err);
-      res.status(500).json({
-        message:
-          "Une erreur s'est produite lors de la création de l'utilisateur.",
-      });
-    }
+  try {
+    const artistsList = await artists.findMany();
+    res.status(201).json(artistsList);
+  } catch (err) {
+    console.error("Erreur lors de la création de l'utilisateur :", err);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la création de l'utilisateur.",
+    });
   }
+}
 
 async function getOneArtist(req, res) {
-    try {
-      const theArtists = await artists.findUnique({
-        where: {
-          userId: parseInt(req.params.id), 
-        },
-      });
-      res.status(201).json(theArtists);
-    } catch (err) {
-      console.error("Erreur lors de la création de l'utilisateur :", err);
-      res.status(500).json({
-        message:
-          "Une erreur s'est produite lors de la création de l'utilisateur.",
-      });
-    }
+  try {
+    const { status, data } = await getArtistById(req.params.id);
+    res.status(status).send(data);
+  } catch (err) {
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de l'obtention de l'utilisateur.",
+      err,
+    });
   }
+}
 
-module.exports =  { createArtist, getOneArtist, getArtists } 
+module.exports = { createArtist, getOneArtist, getArtists };

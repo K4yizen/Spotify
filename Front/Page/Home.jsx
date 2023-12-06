@@ -6,7 +6,7 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import GridView from "./GridHomePage";
+import GridView from "../components/GridHomePage";
 
 export default function Home() {
   return (

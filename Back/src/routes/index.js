@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("./mutlerUpload")
 
 const { getUsers, createUser, getOneUser, updateOneUser } = require("../controller/userController");
-const {getSongs, getOneSongs, createSongs, updateOneSong} = require("../controller/songsController")
+const {getAllSongs, getOneMusic, createSongs, updateOneSong} = require("../controller/songsController")
 const { getAlbums, createAlbums} = require("../controller/albumsController");
 const { getGenres, getOneGenre, deleteGenre } = require("../controller/genreController");
 const { createArtist, getArtists, getOneArtist } = require("../controller/artistsController");
+// const readImageController = require("../controller/imageController/ReadImageController");
+// const createImageController = require("../controller/imageController/CreateImageController");
+
 
 //users
 
@@ -23,8 +25,8 @@ router.post("/artists", createArtist)
 
 //songs
 
-router.get("/songs", getSongs);
-router.get("/songs/:id", getOneSongs);
+router.get("/songs", getAllSongs);
+router.get("/songs/:id", getOneMusic);
 router.post("/songs", createSongs);
 router.put("/songs/:id", updateOneSong)
 
@@ -41,6 +43,10 @@ router.get("/genres", getGenres);
 router.get("/genres/:id", getOneGenre);
 router.delete("/genres/:id", deleteGenre);
 
+//upload
+
+// router.get("/images/:id", readImageController)
+// router.post("/images", createImageController)
 
 
 module.exports = router;
