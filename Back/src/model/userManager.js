@@ -6,9 +6,8 @@ const insertUser = async ({
   lastname,
   email,
   password,
-  signup_date,
   profile_pic,
-}) => {
+})  => {
   try {
     const user = await users.create({
       data: {
@@ -17,16 +16,7 @@ const insertUser = async ({
         lastname,
         email,
         password,
-        signup_date,
         profile_pic,
-      },
-      select: {
-        id: true,
-        firstname: true,
-        lastname: true,
-        email: true,
-        signup_date: true,
-        profile_pic: true,
       },
     });
     return { status: 201, data: user };
