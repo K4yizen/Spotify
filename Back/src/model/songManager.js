@@ -20,11 +20,11 @@ const insertSongs = async ({
         album,
         duration,
         path,
-        albumOrder,
-        plays,
-        albums_id,
-        genres_id,
-        songCover,
+        albumOrder: albumOrder || 1,
+        plays: plays || 0,        
+        albums_id: albums_id || 1, 
+        genres_id: genres_id || 15,
+        songCover: songCover || "",
       },
     });
     return { status: 201, data: song };
@@ -95,7 +95,7 @@ const modifySong = async (id, body) => {
         songCover,
       },
     });
-    return { status: 200, data: song};
+    return { status: 200, data: song };
   } catch (err) {
     console.error(err);
     return { status: 500, data: "Internal Error" };

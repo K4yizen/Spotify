@@ -98,8 +98,8 @@ model playlists_has_users {
 model songs {
   id                      Int                       @id @default(autoincrement())
   title                   String                    @db.VarChar(250)
-  artist                  Int
-  album                   Int
+  artist                  String
+  album                   String
   duration                String                    @db.VarChar(8)
   path                    String                    @db.VarChar(500)
   albumOrder              Int
@@ -140,7 +140,7 @@ model users {
   lastname            String                @db.VarChar(50)
   email               String                @db.VarChar(200)
   password            String                @db.VarChar(32)
-  profile_pic         String                @db.VarChar(500)
+  profile_pic         String?                @db.VarChar(500)
   artists             artists[]
   follow              follow[]
   like                like[]

@@ -8,7 +8,7 @@ async function createArtist(req, res) {
   } catch (err) {
     res.status(500).json({
       message:
-        "Une erreur s'est produite lors de la création de l'utilisateur.",
+        "Une erreur s'est produite lors de la création de l'artiste.",
       err,
     });
   }
@@ -19,10 +19,10 @@ async function getArtists(req, res) {
     const artistsList = await artists.findMany();
     res.status(201).json(artistsList);
   } catch (err) {
-    console.error("Erreur lors de la création de l'utilisateur :", err);
+    console.error("Erreur lors de la création de l'artiste :", err);
     res.status(500).json({
       message:
-        "Une erreur s'est produite lors de la création de l'utilisateur.",
+        "Une erreur s'est produite lors de la création de l'artiste.",
     });
   }
 }
@@ -34,7 +34,7 @@ async function getOneArtist(req, res) {
   } catch (err) {
     res.status(500).json({
       message:
-        "Une erreur s'est produite lors de l'obtention de l'utilisateur.",
+        "Une erreur s'est produite lors de l'obtention de l'artiste.",
       err,
     });
   }

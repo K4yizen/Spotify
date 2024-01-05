@@ -29,7 +29,7 @@ async function getOneUser(req, res) {
 async function createUser(req, res) {
   console.log("has called");
   try {
-    const { status, data } = await insertUser({ ...req.body, profile_pic: req.file.path });
+    const { status, data } = await insertUser(req.body);
     res.status(status).send(data);
   } catch (err) {
     res.status(500).json({
@@ -41,9 +41,9 @@ async function createUser(req, res) {
 }
 
 async function updateOneUser(req, res) {
-  try{
-  const { status, data } = await modifyUser(req.params.id, req.body);
-  res.status(status).send(data);
+  try {
+    const { status, data } = await modifyUser(req.params.id, req.body);
+    res.status(status).send(data);
   } catch (err) {
     res.status(500).json({
       message:
@@ -52,4 +52,31 @@ async function updateOneUser(req, res) {
     });
   }
 }
-module.exports = { getUsers, createUser, getOneUser, updateOneUser };
+
+async function deleteOneUser(req, res) {
+  try {
+    const userId = req.params.id;
+
+    const { status, data } = await users.delete({
+      where: {
+        id: parseInt(userId),
+      },  
+    });
+    res.status(200).json({ message: "L'utilisateur a été supprimé avec succès."});
+
+  } catch (err) {
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la supression de l'utilisateur.",
+      err,
+    });
+  }
+}
+
+module.exports = {
+  getUsers,
+  createUser,
+  getOneUser,
+  updateOneUser,
+  deleteOneUser,
+};

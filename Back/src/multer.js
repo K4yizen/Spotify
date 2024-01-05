@@ -26,10 +26,20 @@ const storageForGenrePicture = generateStorage('Images/CategoryPicture');
 const uploadGenrePicture = multer({ storage: storageForGenrePicture})
 
 
+const storageForSongs = generateStorage('public/songs');
+const uploadSongs = multer({ storage: storageForSongs, fileFilter: audioFileFilter });
+
+function audioFileFilter(req, file, cb) {
+  if (!file.originalname.match(/\.(mp3|wav)$/)) {
+    return cb(new Error('Seuls les fichiers audio MP3 et WAV sont autorisés!'), false);
+  }
+  cb(null, true);
+} 
 
 module.exports = {
   uploadUserProfilePicture,
   uploadAlbumCover,
   uploadSongCover,
-  uploadGenrePicture
+  uploadGenrePicture,
+  uploadSongs,
 };

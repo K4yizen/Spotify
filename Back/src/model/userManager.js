@@ -1,4 +1,5 @@
 const { users } = require("../../prisma/client");
+const DEFAULT_PROFILE_PIC = "http://localhost:8888/images/UserProfilePicture/user-spotify.png";
 
 const insertUser = async ({
   username,
@@ -16,13 +17,13 @@ const insertUser = async ({
         lastname,
         email,
         password,
-        profile_pic,
+        profile_pic: profile_pic || DEFAULT_PROFILE_PIC,
       },
     });
     return { status: 201, data: user };
   } catch (err) {
     console.error(err);
-    return { status: 500, data: "Internal Error" };
+    return { status: 500, data: "Internal Error", err };
   }
 };
 

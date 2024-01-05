@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { uploadUserProfilePicture, uploadAlbumCover, uploadSongCover, uploadGenrePicture }= require("../multer")
+const { uploadUserProfilePicture, uploadAlbumCover, uploadSongCover, uploadGenrePicture, uploadSongs }= require("../multer")
 
 
 const {
@@ -8,6 +8,7 @@ const {
   createUser,
   getOneUser,
   updateOneUser,
+  deleteOneUser
 } = require("../controller/userController");
 const {
   getAllSongs,
@@ -35,6 +36,7 @@ router.get("/users", getUsers);
 router.get("/users/:id", getOneUser);
 router.post("/users", createUser);
 router.put("/users/:id", updateOneUser);
+router.delete("/users/:id", deleteOneUser);
 
 //artists
 
@@ -79,6 +81,17 @@ router.post("/upload/songCover", uploadSongCover.single("songCover"), (req, res)
 router.post("/upload/categoryPicture", uploadGenrePicture.single("genrePicture"), (req, res) => {
   return res.status(200).send("Category Picture Uploaded");
 });
+
+// router.post("/upload/songs", uploadSongs.single("songs"), (req, res) => {
+//   try {
+
+//     return res.status(200).send("Song Uploaded");
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
 
 // router.post("/register", uploadUserProfilePicture.single("profile_pic"), (req, res) => {
 //     console.log(req.file)
