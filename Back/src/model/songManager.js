@@ -1,33 +1,90 @@
-const { songs } = require("../../prisma/client");
+const { songs, albums, songs_has_albums } = require("../../prisma/client");
+
+// const insertSongs = async ({
+//   title,
+//   artist,
+//   album,
+//   duration,
+//   path,
+//   albumOrder,
+//   plays,
+//   albums_id,
+//   genres_id,
+//   songCover,
+// }) => {
+//   try {
+//     const song = await songs.create({
+//       data: {
+//         title,
+//         artist,
+//         album,
+//         duration,
+//         path,
+//         albumOrder: albumOrder || 1,
+//         plays: plays || 0,
+//         albums_id: albums_id || 1,
+//         genres_id: genres_id || 1,
+//         songCover: songCover || "",
+//       },
+//     });
+//     return { status: 201, data: song };
+//   } catch (err) {
+//     console.error(err);
+//     return { status: 500, data: "Internal Error" };
+//   }
+// };
 
 const insertSongs = async ({
   title,
   artist,
-  album,
+  albumName,
   duration,
-  path,
+  songPath,
   albumOrder,
   plays,
-  albums_id,
   genres_id,
-  songCover,
+  albums_id,
+  req,
 }) => {
   try {
-    const song = await songs.create({
+    // Vérifier si l'album existe déjà
+    let album = null;
+    if (albums_id) {
+      album = await albums.findUnique({
+        where: {
+          id: albums_id,
+        },
+      });
+    }
+
+    // Si l'album n'existe pas, le créer
+    if (!album) {
+      album = await albums.create({
+        data: {
+          title: albumName,
+          albumCover: req.body.songCover,
+          genres_id: parseInt(req.body.genres_id),
+        },
+      });
+    }
+
+    const genresId = parseInt(req.body.genres_id, 10);
+
+    const createdSong = await songs.create({
       data: {
         title,
         artist,
-        album,
+        albumName,
         duration,
-        path,
+        path: req?.file?.path || "",
         albumOrder: albumOrder || 1,
-        plays: plays || 0,        
-        albums_id: albums_id || 1, 
-        genres_id: genres_id || 15,
-        songCover: songCover || "",
+        plays: plays || 0,
+        songCover: req.body.songCover,
+        genres_id: genresId,
       },
     });
-    return { status: 201, data: song };
+
+    return { status: 201, data: createdSong };
   } catch (err) {
     console.error(err);
     return { status: 500, data: "Internal Error" };
@@ -102,9 +159,16 @@ const modifySong = async (id, body) => {
   }
 };
 
+const songsHasAlbums = {
+  create: async (data) => {
+    return songs_has_albums.create({ data });
+  },
+};
+
 module.exports = {
   insertSongs,
   modifySong,
   getOneSong,
   getSongs,
+  songsHasAlbums,
 };

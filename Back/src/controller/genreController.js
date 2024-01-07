@@ -1,5 +1,5 @@
 const { genres } = require("../../prisma/client");
-const { getGenreById } = require("../model/genreManager");
+const { getGenreById, createGenre, putGenre } = require("../model/genreManager");
 
 async function getGenres(req, res) {
     try {
@@ -45,5 +45,35 @@ async function getGenres(req, res) {
       });
     }
   }
+
+  async function insertGenre(req, res) {
+    try {
+      const { categoryName, categoryColor, categoryPictures } = req.body;
   
-  module.exports = { getGenres, getOneGenre, deleteGenre}
+      const result = await createGenre(categoryName, categoryColor, categoryPictures);
+  
+      return res.status(201).json(result);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ status: 500, data: 'Internal Error' });
+    }
+  }
+
+  async function updateGenre(req, res) {
+    try {
+      const { id } = req.params;
+      const { categoryName, categoryColor, categoryPictures } = req.body;
+  
+      // Appelez le manager pour mettre à jour le genre
+      const updatedGenre = await putGenre(id, categoryName, categoryColor, categoryPictures);
+  
+      // Retournez la réponse appropriée
+      return res.status(200).json(updatedGenre);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ status: 500, data: 'Internal Error' });
+    }
+  }
+  
+  
+  module.exports = { getGenres, getOneGenre, deleteGenre, insertGenre, updateGenre}

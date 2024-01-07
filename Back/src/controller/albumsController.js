@@ -13,15 +13,15 @@ async function getAlbums(req, res) {
   }
 }
 
-async function createAlbums(req, res) {
+async function createAlbums(req, res,) {
   try {
-    const { title, artist, albumCover, genres_id } = req.body;
+    const { albumName, artist, albumCover, genres_id,} = req.body;
 
     const newAlbum = await albums.create({
       data: {
-        title,
+        title : albumName,
         artist,
-        albumCover,
+        albumCover : albumCover,
         genres_id,
       },
     });

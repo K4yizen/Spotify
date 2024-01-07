@@ -99,12 +99,11 @@ model songs {
   id                      Int                       @id @default(autoincrement())
   title                   String                    @db.VarChar(250)
   artist                  String
-  album                   String
+  albumName               String
   duration                String                    @db.VarChar(8)
   path                    String                    @db.VarChar(500)
   albumOrder              Int
   plays                   Int
-  albums_id               Int
   genres_id               Int
   songCover               String                    @db.VarChar(45)
   artists_has_songs       artists_has_songs[]

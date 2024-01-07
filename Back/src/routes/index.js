@@ -21,6 +21,8 @@ const {
   getGenres,
   getOneGenre,
   deleteGenre,
+  insertGenre,
+  updateGenre,
 } = require("../controller/genreController");
 const {
   createArtist,
@@ -63,6 +65,10 @@ router.post("/albums", createAlbums);
 router.get("/genres", getGenres);
 router.get("/genres/:id", getOneGenre);
 router.delete("/genres/:id", deleteGenre);
+router.post('/genres', insertGenre);
+router.put("/genres/:id", updateGenre);
+
+
 
 //upload
 

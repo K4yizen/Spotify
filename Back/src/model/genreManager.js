@@ -17,5 +17,46 @@ const getGenreById = async (id) => {
       return { status: 500, data: "Internal Error" };
     }
   };
+
+  async function putGenre(id, categoryName, categoryColor, categoryPictures) {
+    try {
+      const existingGenre = await getGenreById(id);
   
-  module.exports = { getGenreById }
+      if (!existingGenre) {
+        throw new Error('Genre not found');
+      }
+  
+      const updatedGenre = await genres.update({
+        where: { id: parseInt(id) },
+        data: {
+          categoryName,
+          categoryColor,
+          categoryPictures,
+        },
+      });
+
+      return updatedGenre;
+    } catch (error) {
+      console.error('Error updating genre:', error);
+      throw error;
+    }
+  }
+
+  const createGenre = async (categoryName, categoryColor, categoryPictures) => {
+    try {
+      const newGenre = await genres.create({
+        data: {
+          categoryName,
+          categoryColor,
+          categoryPictures,
+        },
+      });
+  
+      return newGenre;
+    } catch (error) {
+      console.error('Error creating genre:', error);
+      throw error;
+    }
+  };
+  
+  module.exports = { getGenreById, createGenre, putGenre}
