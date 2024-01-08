@@ -4,11 +4,13 @@ const {
   getSongs,
   modifySong,
   songsHasAlbums,
-  associateSongWithAlbum,
+  associateSongWithAlbum
 } = require("../model/songManager");
-const { uploadSongs } = require("../multer");
-const multer = require("multer");
+const { uploadSongs, } = require("../multer")
+const multer = require('multer');
 const { createAlbums } = require("./albumsController");
+
+
 
 async function getAllSongs(req, res) {
   try {
@@ -38,7 +40,7 @@ async function getOneMusic(req, res) {
 
 // async function createSongs(req, res) {
 //   try {
-//     console.log("Request body:", req.body);
+//     console.log("Request body:", req.body); 
 //     const { status, data } = await insertSongs(req.body);
 //     res.status(status).send(data);
 //   } catch (err) {
@@ -48,7 +50,7 @@ async function getOneMusic(req, res) {
 //       err,
 //     });
 //   }
-// }
+// }    
 // ...
 async function createSongs(req, res) {
   try {
@@ -98,8 +100,7 @@ async function createSongs(req, res) {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ status: 500, data: "Internal Error" });
-  }
-}
+  }}
 
 async function updateOneSong(req, res) {
   try {
@@ -114,6 +115,7 @@ async function updateOneSong(req, res) {
   }
 }
 
+
 const songsHasAlbumsController = {
   associateSongWithAlbum: async (songId, albumId, order) => {
     try {
@@ -123,19 +125,13 @@ const songsHasAlbumsController = {
         order: order || 0, // Définissez une valeur par défaut pour l'ordre si nécessaire
       };
       await songsHasAlbums.create(data);
-      return { status: 200, data: "Association réussie" };
+      return { status: 200, data: 'Association réussie' };
     } catch (error) {
       console.error(error);
-      return { status: 500, data: "Erreur interne" };
+      return { status: 500, data: 'Erreur interne' };
     }
   },
   // Ajoutez d'autres méthodes si nécessaire
 };
 
-module.exports = {
-  getAllSongs,
-  getOneMusic,
-  createSongs,
-  updateOneSong,
-  songsHasAlbumsController,
-};
+module.exports = { getAllSongs, getOneMusic, createSongs, updateOneSong, songsHasAlbumsController };
