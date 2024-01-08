@@ -15,6 +15,7 @@ const {
   getOneMusic,
   createSongs,
   updateOneSong,
+  getSongsWithAlbums
 } = require("../controller/songsController");
 const { getAlbums, createAlbums } = require("../controller/albumsController");
 const {
@@ -49,6 +50,7 @@ router.post("/artists", createArtist);
 //songs
 
 router.get("/songs", getAllSongs);
+router.get("/songs-albums", getSongsWithAlbums);
 router.get("/songs/:id", getOneMusic);
 router.post("/songs", createSongs);
 router.put("/songs/:id", updateOneSong);

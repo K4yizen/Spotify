@@ -13,19 +13,23 @@ async function getAlbums(req, res) {
   }
 }
 
-async function createAlbums(req, res,) {
+
+// createAlbumsSongs
+
+async function createAlbums(albumData, req, res,) {
   try {
-    const { albumName, artist, albumCover, genres_id,} = req.body;
+    const { albumName, albumCover, genres_id,} = albumData;
+
+    console.log(albumData);
 
     const newAlbum = await albums.create({
       data: {
         title : albumName,
-        artist,
         albumCover : albumCover,
         genres_id,
       },
     });
-    res.status(201).json(newAlbum);
+    return newAlbum;
   } catch (err) {
     console.error("Erreur lors de la création de l'album :", err);
     res.status(500).json({

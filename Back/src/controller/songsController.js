@@ -4,11 +4,11 @@ const {
   getSongs,
   modifySong,
   songsHasAlbums,
-  associateSongWithAlbum
 } = require("../model/songManager");
 const { uploadSongs, } = require("../multer")
 const multer = require('multer');
 const { createAlbums } = require("./albumsController");
+const { songs_has_albums } = require("../../prisma/client");
 
 
 
@@ -74,19 +74,25 @@ async function createSongs(req, res) {
         req: req,
       });
 
+      console.log(createdSong.data.id);
+     
+
       // Vérifiez si createdSong.albumName est défini
-      if (createdSong.albumName) {
+      if (createdSong.data.title) {
         // Créez l'album associé à la chanson en utilisant le nom de la chanson
         const createdAlbum = await createAlbums({
-          albumName: createdSong.albumName,
-          artist: createdSong.artist,
-          albumCover: createdSong.songCoverPath,
-          genres_id: createdSong.genres_id,
-        });
+          albumName: createdSong.data.title,
+          artist: createdSong.data.artist,
+          albumCover: createdSong.data.songCover,
+          genres_id: createdSong.data.genres_id,
+        },req, res);
+
+        console.log(createdAlbum);
+
 
         // Associez la chanson à l'album
         await songsHasAlbumsController.associateSongWithAlbum(
-          createdSong.id,
+          createdSong.data.id,
           createdAlbum.id,
           req.body.albumOrder
         );
@@ -134,4 +140,20 @@ const songsHasAlbumsController = {
   // Ajoutez d'autres méthodes si nécessaire
 };
 
-module.exports = { getAllSongs, getOneMusic, createSongs, updateOneSong, songsHasAlbumsController };
+async function getSongsWithAlbums(req, res) {
+  try {
+    const songsWithAlbums = await songs_has_albums.findMany({
+      include: {
+        songs: true,
+        albums: true,
+      },
+    });
+
+    res.status(200).json(songsWithAlbums);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des chansons avec albums :", error);
+    res.status(500).json({ message: "Internal Error" });
+  }
+}
+
+module.exports = { getAllSongs, getOneMusic, createSongs, updateOneSong, songsHasAlbumsController, getSongsWithAlbums };
