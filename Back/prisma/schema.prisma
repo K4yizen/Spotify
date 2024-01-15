@@ -137,7 +137,7 @@ model users {
   firstname           String                @db.VarChar(50)
   lastname            String                @db.VarChar(50)
   email               String                @db.VarChar(200)
-  password            String                @db.VarChar(32)
+  password            String                @db.VarChar(500)
   profile_pic         String?                @db.VarChar(500)
   artists             artists[]
   follow              follow[]

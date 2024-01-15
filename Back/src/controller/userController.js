@@ -27,7 +27,6 @@ async function getOneUser(req, res) {
 }
 
 async function createUser(req, res) {
-  console.log("has called");
   try {
     const { status, data } = await insertUser(req.body);
     res.status(status).send(data);

@@ -44,6 +44,20 @@ const getUserById = async (id) => {
   }
 };
 
+const getUserByEmail = async (email) => {
+  try {
+    const user = await users.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    return { status: 200, data: user };
+  } catch (err) {
+    console.error(err);
+    return { status: 500, data: "Internal Error" };
+  }
+};
+
 const modifyUser = async (id, body) => {
   const { username, firstname, lastname, email, password, profile_pic } = body;
   try {
@@ -79,4 +93,5 @@ module.exports = {
   insertUser,
   modifyUser,
   getUserById,
+  getUserByEmail,
 };

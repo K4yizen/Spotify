@@ -1,11 +1,15 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   uploadUserProfilePicture,
   uploadAlbumCover,
   uploadSongCover,
   uploadGenrePicture,
 } = require("../multer");
+
+const { hashPassword } = require("../../services/passwordHelper");
+const { login } = require("../controller/authController");
 
 const {
   getUsers,
@@ -60,11 +64,17 @@ const {
   getAllPlaylistsHasUsersController,
 } = require("../controller/playlistController");
 
+// auth
+
+router.post("/login", login);
+
+
 //users
 
 router.get("/users", getUsers);
 router.get("/users/:id", getOneUser);
 router.post("/users", createUser);
+router.post("/users-test",hashPassword, createUser);
 router.put("/users/:id", updateOneUser);
 router.delete("/users/:id", deleteOneUser);
 
