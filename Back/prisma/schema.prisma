@@ -58,7 +58,7 @@ model genres {
   songs            songs[]
 }
 
-model like {
+model user_likes {
   users_id Int
   songs_id Int
   songs    songs @relation(fields: [songs_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_has_songs_songs1")
@@ -78,7 +78,6 @@ model playlistSongs {
 model playlists {
   id                  Int                   @id @default(autoincrement())
   name                String                @db.VarChar(50)
-  dateCreated         DateTime              @db.DateTime(0)
   users_id            Int
   playlistCover       String                @db.VarChar(45)
   users               users                 @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_playlists_users1")
@@ -107,7 +106,7 @@ model songs {
   genres_id               Int
   songCover               String                    @db.VarChar(45)
   artists_has_songs       artists_has_songs[]
-  like                    like[]
+  user_likes              user_likes[]
   albums                  songs_has_albums[]
   genres                  genres                    @relation(fields: [genres_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_songs_genres1")
   songs_has_playlistSongs songs_has_playlistSongs[]
@@ -142,7 +141,7 @@ model users {
   profile_pic         String?                @db.VarChar(500)
   artists             artists[]
   follow              follow[]
-  like                like[]
+  user_likes user_likes[]
   playlists           playlists[]
   playlists_has_users playlists_has_users[]
 }

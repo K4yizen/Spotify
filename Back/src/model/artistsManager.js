@@ -1,19 +1,19 @@
-const { artists } = require("../../prisma/client");
+const { artists, artists_has_songs, follow } = require("../../prisma/client");
 
-const createNewArtist = async ({ name, artistCover, userId }) => {
+const createNewArtist = async ({ name, artistCover, users_id }) => {
   try {
     const artist = await artists.create({
       data: {
         name: name,
         artistCover: artistCover,
         users: {
-          connect: { id: userId },
+          connect: { id: users_id },
         },
       },
       select: {
         name: true,
         artistCover: false,
-        userId: false,
+        users_id: false,
         users: false,
       },
     });
@@ -41,6 +41,52 @@ const getArtistById = async (id) => {
       return { status: 500, data: "Internal Error" };
     }
   };
-  
 
-module.exports = { createNewArtist, getArtistById };
+  const linkArtistToSong = async (artists_userId, songs_id) => {
+    try {
+      const link = await artists_has_songs.create({
+        data: {
+          artists_userId : artists_userId,
+          songs_id,
+        },
+      });
+      return link;
+    } catch (err) {
+      console.error(err);
+      throw new Error("Erreur lors de la liaison de l'artiste à la chanson");
+    }
+  };
+
+  const followArtist = async (users_id, artists_userId) => {
+    try {
+      await follow.create({
+        data: {
+          users_id,
+          artists_userId,
+        },
+      });
+      return { status: 200, data: 'Artiste suivi avec succès' };
+    } catch (error) {
+      console.error(error);
+      return { status: 500, data: 'Erreur interne' };
+    }
+  };
+
+  const unfollowArtist = async (users_id, artists_userId) => {
+    try {
+      await follow.delete({
+        where: {
+          users_id_artists_userId: {
+            users_id,
+            artists_userId,
+          },
+        },
+      });
+      return { status: 200, data: 'Artiste unfollow avec succès' };
+    } catch (error) {
+      console.error(error);
+      return { status: 500, data: 'Erreur interne' };
+    }
+  };
+
+module.exports = { createNewArtist, getArtistById, linkArtistToSong, followArtist, unfollowArtist };

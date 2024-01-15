@@ -3,14 +3,16 @@ const {
   getOneSong,
   getSongs,
   modifySong,
+  likeSong,
+  unlikeSong,
   songsHasAlbums,
 } = require("../model/songManager");
-const { uploadSongs, } = require("../multer")
-const multer = require('multer');
+
+const { linkArtistToSong } = require("../model/artistsManager");
+const { uploadSongs } = require("../multer");
+const multer = require("multer");
 const { createAlbums } = require("./albumsController");
 const { songs_has_albums } = require("../../prisma/client");
-
-
 
 async function getAllSongs(req, res) {
   try {
@@ -38,23 +40,9 @@ async function getOneMusic(req, res) {
   }
 }
 
-// async function createSongs(req, res) {
-//   try {
-//     console.log("Request body:", req.body); 
-//     const { status, data } = await insertSongs(req.body);
-//     res.status(status).send(data);
-//   } catch (err) {
-//     console.error("Error:", err);
-//     res.status(500).json({
-//       message: "Une erreur s'est produite lors de la création de la musique.",
-//       err,
-//     });
-//   }
-// }    
-// ...
 async function createSongs(req, res) {
   try {
-    // Utilisez la fonction d'upload de Multer pour gérer les fichiers
+    // Utilisez la fonction d'upload de Multer pour gérer les fichiers à déplacer dans la route
     uploadSongs.single("song")(req, res, async function (err) {
       if (err instanceof multer.MulterError) {
         return res
@@ -75,20 +63,22 @@ async function createSongs(req, res) {
       });
 
       console.log(createdSong.data.id);
-     
 
       // Vérifiez si createdSong.albumName est défini
       if (createdSong.data.title) {
         // Créez l'album associé à la chanson en utilisant le nom de la chanson
-        const createdAlbum = await createAlbums({
-          albumName: createdSong.data.title,
-          artist: createdSong.data.artist,
-          albumCover: createdSong.data.songCover,
-          genres_id: createdSong.data.genres_id,
-        },req, res);
+        const createdAlbum = await createAlbums(
+          {
+            albumName: createdSong.data.title,
+            artist: createdSong.data.artist,
+            albumCover: createdSong.data.songCover,
+            genres_id: createdSong.data.genres_id,
+          },
+          req,
+          res
+        );
 
         console.log(createdAlbum);
-
 
         // Associez la chanson à l'album
         await songsHasAlbumsController.associateSongWithAlbum(
@@ -96,6 +86,9 @@ async function createSongs(req, res) {
           createdAlbum.id,
           req.body.albumOrder
         );
+
+        // Lier l'artiste à la chanson (remplacer 1 par l'id de lartist)
+        await linkArtistToSong(1, createdSong.data.id);
       }
 
       // Retournez la réponse appropriée
@@ -106,7 +99,8 @@ async function createSongs(req, res) {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ status: 500, data: "Internal Error" });
-  }}
+  }
+}
 
 async function updateOneSong(req, res) {
   try {
@@ -121,7 +115,6 @@ async function updateOneSong(req, res) {
   }
 }
 
-
 const songsHasAlbumsController = {
   associateSongWithAlbum: async (songId, albumId, order) => {
     try {
@@ -131,10 +124,10 @@ const songsHasAlbumsController = {
         order: order || 0, // Définissez une valeur par défaut pour l'ordre si nécessaire
       };
       await songsHasAlbums.create(data);
-      return { status: 200, data: 'Association réussie' };
+      return { status: 200, data: "Association réussie" };
     } catch (error) {
       console.error(error);
-      return { status: 500, data: 'Erreur interne' };
+      return { status: 500, data: "Erreur interne" };
     }
   },
   // Ajoutez d'autres méthodes si nécessaire
@@ -151,9 +144,43 @@ async function getSongsWithAlbums(req, res) {
 
     res.status(200).json(songsWithAlbums);
   } catch (error) {
-    console.error("Erreur lors de la récupération des chansons avec albums :", error);
+    console.error(
+      "Erreur lors de la récupération des chansons avec albums :",
+      error
+    );
     res.status(500).json({ message: "Internal Error" });
   }
 }
 
-module.exports = { getAllSongs, getOneMusic, createSongs, updateOneSong, songsHasAlbumsController, getSongsWithAlbums };
+async function likeSongController(req, res) {
+  try {
+    const { users_id, songs_id } = req.body;
+    const { status, data } = await likeSong(users_id, songs_id);
+    res.status(status).json({ message: data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur interne' });
+  }
+}
+
+async function unlikeSongController(req, res) {
+  try {
+    const { users_id, songs_id } = req.body;
+    const { status, data } = await unlikeSong(users_id, songs_id);
+    res.status(status).json({ message: data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur interne' });
+  }
+}
+
+module.exports = {
+  getAllSongs,
+  getOneMusic,
+  createSongs,
+  updateOneSong,
+  songsHasAlbumsController,
+  getSongsWithAlbums,
+  likeSongController,
+  unlikeSongController
+};

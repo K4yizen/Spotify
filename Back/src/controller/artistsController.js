@@ -1,5 +1,5 @@
 const { artists } = require("../../prisma/client");
-const { createNewArtist, getArtistById } = require("../model/artistsManager");
+const { createNewArtist, getArtistById, followArtist, unfollowArtist } = require("../model/artistsManager");
 
 async function createArtist(req, res) {
   try {
@@ -40,4 +40,26 @@ async function getOneArtist(req, res) {
   }
 }
 
-module.exports = { createArtist, getOneArtist, getArtists };
+async function followArtistController(req, res) {
+  try {
+    const { users_id, artists_userId } = req.body;
+    const { status, data } = await followArtist(users_id, artists_userId);
+    res.status(status).json({ message: data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur interne' });
+  }
+} 
+
+async function unfollowArtistController(req, res) {
+  try {
+    const { users_id, artists_userId } = req.body;
+    const { status, data } = await unfollowArtist(users_id, artists_userId);
+    res.status(status).json({ message: data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur interne' });
+  }
+}
+
+module.exports = { createArtist, getOneArtist, getArtists, followArtistController, unfollowArtistController };

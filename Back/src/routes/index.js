@@ -1,23 +1,37 @@
 const express = require("express");
 const router = express.Router();
-const { uploadUserProfilePicture, uploadAlbumCover, uploadSongCover, uploadGenrePicture, uploadSongs }= require("../multer")
-
+const {
+  uploadUserProfilePicture,
+  uploadAlbumCover,
+  uploadSongCover,
+  uploadGenrePicture,
+} = require("../multer");
 
 const {
   getUsers,
   createUser,
   getOneUser,
   updateOneUser,
-  deleteOneUser
+  deleteOneUser,
 } = require("../controller/userController");
+
 const {
   getAllSongs,
   getOneMusic,
   createSongs,
   updateOneSong,
-  getSongsWithAlbums
+  getSongsWithAlbums,
+  likeSongController,
+  unlikeSongController,
 } = require("../controller/songsController");
-const { getAlbums, createAlbums } = require("../controller/albumsController");
+
+const {
+  getAlbums,
+  createAlbumWithSongs,
+  getSingleAlbum,
+  deleteOneAlbum,
+} = require("../controller/albumsController");
+
 const {
   getGenres,
   getOneGenre,
@@ -25,13 +39,26 @@ const {
   insertGenre,
   updateGenre,
 } = require("../controller/genreController");
+
 const {
   createArtist,
   getArtists,
   getOneArtist,
+  followArtistController,
+  unfollowArtistController,
 } = require("../controller/artistsController");
-// const readImageController = require("../controller/imageController/ReadImageController");
-// const createImageController = require("../controller/imageController/CreateImageController");
+
+
+const {
+  followPlaylistController,
+  unfollowPlaylistController,
+  createPlaylistController,
+  getPlaylistsController,
+  getPlaylistByIdController,
+  updatePlaylistController,
+  deletePlaylistController,
+  getAllPlaylistsHasUsersController,
+} = require("../controller/playlistController");
 
 //users
 
@@ -46,6 +73,8 @@ router.delete("/users/:id", deleteOneUser);
 router.get("/artists", getArtists);
 router.get("/artists/:id", getOneArtist);
 router.post("/artists", createArtist);
+router.post("/follow", followArtistController);
+router.post("/unfollow", unfollowArtistController);
 
 //songs
 
@@ -54,70 +83,68 @@ router.get("/songs-albums", getSongsWithAlbums);
 router.get("/songs/:id", getOneMusic);
 router.post("/songs", createSongs);
 router.put("/songs/:id", updateOneSong);
+router.post("/like-song", likeSongController);
+router.post("/unlike-song", unlikeSongController);
+
+//playlist  
+
+router.get("/playlist", getPlaylistsController);
+router.get("/playlist/:id", getPlaylistByIdController);
+router.post("/playlist", createPlaylistController);
+router.put("/playlist/:id", updatePlaylistController)
+router.delete("/playlist/:id", deletePlaylistController)
+router.get('/playlists-users', getAllPlaylistsHasUsersController);
+router.post("/follow-playlist", followPlaylistController);
+router.post("/unfollow-playlist", unfollowPlaylistController);
 
 //albums
 
 router.get("/albums", getAlbums);
-// router.get("/albums/:id", getOneAlbums)
-router.post("/albums", createAlbums);
+router.get("/albums/:id", getSingleAlbum);
+router.post("/albums", createAlbumWithSongs);
 // router.put("/albums/:id", updateOneAlbum)
+router.delete("/albums/:id", deleteOneAlbum);
 
 //genres
 
 router.get("/genres", getGenres);
 router.get("/genres/:id", getOneGenre);
 router.delete("/genres/:id", deleteGenre);
-router.post('/genres', insertGenre);
+router.post("/genres", insertGenre);
 router.put("/genres/:id", updateGenre);
-
-
 
 //upload
 
-router.post("/upload/profilePicture", uploadUserProfilePicture.single("userImage"), (req, res) => {
-  return res.status(200).send("User Image Uploaded");
-});
+router.post(
+  "/upload/profilePicture",
+  uploadUserProfilePicture.single("userImage"),
+  (req, res) => {
+    return res.status(200).send("User Image Uploaded");
+  }
+);
 
-router.post("/upload/albumCover", uploadAlbumCover.single("albumCover"), (req, res) => {
-  return res.status(200).send("Album Cover Uploaded");
-});
+router.post(
+  "/upload/albumCover",
+  uploadAlbumCover.single("albumCover"),
+  (req, res) => {
+    return res.status(200).send("Album Cover Uploaded");
+  }
+);
 
-router.post("/upload/songCover", uploadSongCover.single("songCover"), (req, res) => {
-  return res.status(200).send("Song Cover Uploaded");
-});
+router.post(
+  "/upload/songCover",
+  uploadSongCover.single("songCover"),
+  (req, res) => {
+    return res.status(200).send("Song Cover Uploaded");
+  }
+);
 
-router.post("/upload/categoryPicture", uploadGenrePicture.single("genrePicture"), (req, res) => {
-  return res.status(200).send("Category Picture Uploaded");
-});
-
-// router.post("/upload/songs", uploadSongs.single("songs"), (req, res) => {
-//   try {
-
-//     return res.status(200).send("Song Uploaded");
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
-
-// router.post("/register", uploadUserProfilePicture.single("profile_pic"), (req, res) => {
-//     console.log(req.file)
-// }, createUser)
-
-router.post('/register', uploadUserProfilePicture.single('profile_pic'), (req, res) => {
-    try {
-        console.log(req.file); // Affiche les détails du fichier
-        console.log(req.body); // Affiche les données du formulaire (si utilisant enctype="multipart/form-data")
-        
-        // Création de l'utilisateur avec les données du formulaire
-        createUser(req, res);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Une erreur s\'est produite lors de l\'inscription.' });
-    }
-  });
-
-router.get("/images");
+router.post(
+  "/upload/categoryPicture",
+  uploadGenrePicture.single("genrePicture"),
+  (req, res) => {
+    return res.status(200).send("Category Picture Uploaded");
+  }
+);
 
 module.exports = router;

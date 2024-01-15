@@ -1,4 +1,4 @@
-const { songs, albums, songs_has_albums } = require("../../prisma/client");
+const { songs, albums, songs_has_albums, user_likes } = require("../../prisma/client");
 
 // const insertSongs = async ({
 //   title,
@@ -164,10 +164,42 @@ const songsHasAlbums = {
   },
 };
 
+const likeSong = async (users_id, songs_id) => {
+  try {
+    await user_likes.create({
+      data: {
+        users_id,
+        songs_id,
+      },
+    });
+    return { status: 200, data: 'Chanson likée avec succès' };
+  } catch (error) {
+    console.error(error);
+    return { status: 500, data: 'Erreur interne' };
+  }
+};
+
+const unlikeSong = async (users_id, songs_id) => {
+  try {
+    await user_likes.deleteMany({
+      where: {
+          users_id,
+          songs_id,
+      },
+    });
+    return { status: 200, data: 'Chanson unlikée avec succès' };
+  } catch (error) {
+    console.error(error);
+    return { status: 500, data: 'Erreur interne' };
+  }
+};
+
 module.exports = {
   insertSongs,
   modifySong,
   getOneSong,
   getSongs,
   songsHasAlbums,
+  likeSong,
+  unlikeSong,
 };
