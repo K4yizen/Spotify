@@ -25,8 +25,7 @@ const {
   createSongs,
   updateOneSong,
   getSongsWithAlbums,
-  likeSongController,
-  unlikeSongController,
+  getSongsByArtistController,
 } = require("../controller/songsController");
 
 const {
@@ -63,6 +62,7 @@ const {
   deletePlaylistController,
   getAllPlaylistsHasUsersController,
 } = require("../controller/playlistController");
+const { addLike, removeLike, getUserLikes, getUserLikesByArtist, } = require("../controller/likeController");
 
 // auth
 
@@ -91,10 +91,17 @@ router.post("/unfollow", unfollowArtistController);
 router.get("/songs", getAllSongs);
 router.get("/songs-albums", getSongsWithAlbums);
 router.get("/songs/:id", getOneMusic);
+router.get("/songs-artist/:id", getSongsByArtistController);
 router.post("/songs", createSongs);
 router.put("/songs/:id", updateOneSong);
-router.post("/like-song", likeSongController);
-router.post("/unlike-song", unlikeSongController);
+
+// likes
+router.get('/like-song/:userId/:artistId', getUserLikesByArtist);
+router.get("/like-song/:id", getUserLikes );
+router.get("/like-song/:id", getUserLikes );
+router.post("/like-song", addLike);
+router.post("/unlike-song", removeLike);
+
 
 //playlist  
 

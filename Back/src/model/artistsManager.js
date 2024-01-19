@@ -42,6 +42,23 @@ const getArtistById = async (id) => {
     }
   };
 
+  const getSongsByArtist =  async(artistId) => {
+    try {
+      const songsByArtist = await artists_has_songs.findMany({
+        where: {
+          artists_userId: artistId,
+        },
+        include: {
+          songs: true,
+        },
+      });
+      return songsByArtist;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des chansons de l'artiste :", error);
+      throw new Error("Internal Error");
+    }
+  }
+
   const linkArtistToSong = async (artists_userId, songs_id) => {
     try {
       const link = await artists_has_songs.create({
@@ -89,4 +106,4 @@ const getArtistById = async (id) => {
     }
   };
 
-module.exports = { createNewArtist, getArtistById, linkArtistToSong, followArtist, unfollowArtist };
+module.exports = { createNewArtist, getArtistById, linkArtistToSong, followArtist, unfollowArtist, getSongsByArtist };

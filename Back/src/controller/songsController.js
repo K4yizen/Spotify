@@ -3,12 +3,10 @@ const {
   getOneSong,
   getSongs,
   modifySong,
-  likeSong,
-  unlikeSong,
   songsHasAlbums,
 } = require("../model/songManager");
 
-const { linkArtistToSong } = require("../model/artistsManager");
+const { linkArtistToSong, getSongsByArtist } = require("../model/artistsManager");
 const { uploadSongs } = require("../multer");
 const multer = require("multer");
 const { createAlbums } = require("./albumsController");
@@ -152,27 +150,19 @@ async function getSongsWithAlbums(req, res) {
   }
 }
 
-async function likeSongController(req, res) {
+async function getSongsByArtistController(req, res) {
   try {
-    const { users_id, songs_id } = req.body;
-    const { status, data } = await likeSong(users_id, songs_id);
-    res.status(status).json({ message: data });
+    const artistId = parseInt(req.params.id);
+    const songsByArtist = await getSongsByArtist(artistId);
+    res.status(200).json(songsByArtist);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Erreur interne' });
+    console.error("Erreur lors de la récupération des chansons de l'artiste :", error);
+    res.status(500).json({ message: "Internal Error" });
   }
 }
 
-async function unlikeSongController(req, res) {
-  try {
-    const { users_id, songs_id } = req.body;
-    const { status, data } = await unlikeSong(users_id, songs_id);
-    res.status(status).json({ message: data });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Erreur interne' });
-  }
-}
+
+
 
 module.exports = {
   getAllSongs,
@@ -181,6 +171,5 @@ module.exports = {
   updateOneSong,
   songsHasAlbumsController,
   getSongsWithAlbums,
-  likeSongController,
-  unlikeSongController
+  getSongsByArtistController,
 };
