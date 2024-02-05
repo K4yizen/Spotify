@@ -1,39 +1,5 @@
 const { songs, albums, songs_has_albums, user_likes } = require("../../prisma/client");
 
-// const insertSongs = async ({
-//   title,
-//   artist,
-//   album,
-//   duration,
-//   path,
-//   albumOrder,
-//   plays,
-//   albums_id,
-//   genres_id,
-//   songCover,
-// }) => {
-//   try {
-//     const song = await songs.create({
-//       data: {
-//         title,
-//         artist,
-//         album,
-//         duration,
-//         path,
-//         albumOrder: albumOrder || 1,
-//         plays: plays || 0,
-//         albums_id: albums_id || 1,
-//         genres_id: genres_id || 1,
-//         songCover: songCover || "",
-//       },
-//     });
-//     return { status: 201, data: song };
-//   } catch (err) {
-//     console.error(err);
-//     return { status: 500, data: "Internal Error" };
-//   }
-// };
-
 const insertSongs = async ({
   title,
   artist,
@@ -47,6 +13,7 @@ const insertSongs = async ({
     console.log("Value of req.body.songCover:", req.body);
 
     // Vérifier si l'album existe déjà
+    
     let album = null;
     if (albums_id) {
       album = await albums.findUnique({
@@ -68,6 +35,8 @@ const insertSongs = async ({
     }
 
     const genresId = parseInt(req.body.genres_id, 10);
+
+
 
     const createdSong = await songs.create({
       data: {

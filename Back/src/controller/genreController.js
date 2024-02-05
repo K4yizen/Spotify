@@ -1,5 +1,5 @@
 const { genres } = require("../../prisma/client");
-const { getGenreById, createGenre, putGenre } = require("../model/genreManager");
+const { getGenreById, createGenre, putGenre, getSongsByGenre, getAlbumsByGenre } = require("../model/genreManager");
 
 async function getGenres(req, res) {
     try {
@@ -74,6 +74,39 @@ async function getGenres(req, res) {
       return res.status(500).json({ status: 500, data: 'Internal Error' });
     }
   }
+
+  const getSongsByGenreController = async (req, res) => {
+    try {
+      const { genreId } = req.params;
   
+      const songs = await getSongsByGenre(genreId);
   
-  module.exports = { getGenres, getOneGenre, deleteGenre, insertGenre, updateGenre}
+      if (!songs) {
+        return res.status(404).json({ message: 'Genre not found' });
+      }
+  
+      return res.json(songs);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ status: 500, data: 'Internal Error' });
+    }
+  };
+
+  const getAlbumsByGenreController = async (req, res) => {
+    try {
+      const { genreId } = req.params;
+  
+      const albums = await getAlbumsByGenre(genreId);
+  
+      if (!albums) {
+        return res.status(404).json({ message: 'Genre not found' });
+      }
+  
+      return res.json(albums);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ status: 500, data: 'Internal Error' });
+    }
+  };
+  
+  module.exports = { getGenres, getOneGenre, deleteGenre, insertGenre, updateGenre, getSongsByGenreController, getAlbumsByGenreController}

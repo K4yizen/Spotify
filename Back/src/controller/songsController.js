@@ -11,6 +11,17 @@ const { uploadSongs } = require("../multer");
 const multer = require("multer");
 const { createAlbums } = require("./albumsController");
 const { songs_has_albums } = require("../../prisma/client");
+const mm = require('music-metadata');
+
+function formatDuration(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.round(seconds % 60);
+
+  const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+
+  return `${formattedMinutes}:${formattedSeconds}`;
+}
 
 async function getAllSongs(req, res) {
   try {
@@ -40,7 +51,6 @@ async function getOneMusic(req, res) {
 
 async function createSongs(req, res) {
   try {
-    // Utilisez la fonction d'upload de Multer pour gérer les fichiers à déplacer dans la route
     uploadSongs.single("song")(req, res, async function (err) {
       if (err instanceof multer.MulterError) {
         return res
@@ -50,21 +60,14 @@ async function createSongs(req, res) {
         return res.status(500).json({ status: 500, data: "Internal Error" });
       }
 
-      // Obtenez le chemin du fichier téléchargé
-      const songPath = req.file ? req.file.path : null;
-
-      // Créez la chanson
       const createdSong = await insertSongs({
         ...req.body,
-        songPath,
         req: req,
       });
 
       console.log(createdSong.data.id);
 
-      // Vérifiez si createdSong.albumName est défini
       if (createdSong.data.title) {
-        // Créez l'album associé à la chanson en utilisant le nom de la chanson
         const createdAlbum = await createAlbums(
           {
             albumName: createdSong.data.title,
@@ -78,18 +81,15 @@ async function createSongs(req, res) {
 
         console.log(createdAlbum);
 
-        // Associez la chanson à l'album
         await songsHasAlbumsController.associateSongWithAlbum(
           createdSong.data.id,
           createdAlbum.id,
           req.body.albumOrder
         );
 
-        // Lier l'artiste à la chanson (remplacer 1 par l'id de lartist)
         await linkArtistToSong(1, createdSong.data.id);
       }
 
-      // Retournez la réponse appropriée
       return res
         .status(201)
         .json({ message: "Chanson créée avec succès", data: createdSong });

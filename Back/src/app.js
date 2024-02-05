@@ -12,7 +12,6 @@ app.use(cors({
   
 app.use(express.static('public'));
 
-
 const router = require("./routes");
 app.use("/", router);
 

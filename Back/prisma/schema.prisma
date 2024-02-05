@@ -24,7 +24,7 @@ model artists {
   userId            Int                 @id @default(autoincrement())
   name              String              @db.VarChar(50)
   users_id          Int
-  artistCover       String              @db.VarChar(45)
+  artistCover       String              @db.VarChar(500)
   users             users               @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_artists_users1")
   artists_has_songs artists_has_songs[]
   follow            follow[]
@@ -75,7 +75,7 @@ model playlistSongs {
   songs_has_playlistSongs songs_has_playlistSongs[]
 }
 
-model playlists {
+  model playlists {
   id                  Int                   @id @default(autoincrement())
   name                String                @db.VarChar(50)
   users_id            Int
@@ -97,7 +97,7 @@ model playlists_has_users {
 model songs {
   id                      Int                       @id @default(autoincrement())
   title                   String                    @db.VarChar(250)
-  artist                  String
+  // artist                  String
   albumName               String
   duration                String                    @db.VarChar(8)
   path                    String                    @db.VarChar(500)
@@ -141,7 +141,7 @@ model users {
   profile_pic         String?                @db.VarChar(500)
   artists             artists[]
   follow              follow[]
-  user_likes user_likes[]
+  user_likes user_likes[] 
   playlists           playlists[]
   playlists_has_users playlists_has_users[]
 }

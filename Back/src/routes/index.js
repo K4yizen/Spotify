@@ -41,6 +41,8 @@ const {
   deleteGenre,
   insertGenre,
   updateGenre,
+  getSongsByGenreController,
+  getAlbumsByGenreController,
 } = require("../controller/genreController");
 
 const {
@@ -49,6 +51,8 @@ const {
   getOneArtist,
   followArtistController,
   unfollowArtistController,
+  getFollowArtistByUserController,
+  isFollowing,
 } = require("../controller/artistsController");
 
 
@@ -63,6 +67,7 @@ const {
   getAllPlaylistsHasUsersController,
 } = require("../controller/playlistController");
 const { addLike, removeLike, getUserLikes, getUserLikesByArtist, } = require("../controller/likeController");
+const { validateUser } = require("../../services/validators");
 
 // auth
 
@@ -73,10 +78,15 @@ router.post("/login", login);
 
 router.get("/users", getUsers);
 router.get("/users/:id", getOneUser);
-router.post("/users", createUser);
-router.post("/users-test",hashPassword, createUser);
+router.post("/users",validateUser, hashPassword ,createUser);
+// router.post("/users-test",hashPassword, createUser);
 router.put("/users/:id", updateOneUser);
 router.delete("/users/:id", deleteOneUser);
+
+//follow
+
+router.get("/user-follow/:id", getFollowArtistByUserController);
+router.get("/user-follow/:users_id/:artistId", isFollowing);
 
 //artists
 
@@ -97,7 +107,6 @@ router.put("/songs/:id", updateOneSong);
 
 // likes
 router.get('/like-song/:userId/:artistId', getUserLikesByArtist);
-router.get("/like-song/:id", getUserLikes );
 router.get("/like-song/:id", getUserLikes );
 router.post("/like-song", addLike);
 router.post("/unlike-song", removeLike);
@@ -126,6 +135,8 @@ router.delete("/albums/:id", deleteOneAlbum);
 
 router.get("/genres", getGenres);
 router.get("/genres/:id", getOneGenre);
+router.get('/songsByGenre/:genreId', getSongsByGenreController);
+router.get('/albumsByGenre/:genreId', getAlbumsByGenreController);
 router.delete("/genres/:id", deleteGenre);
 router.post("/genres", insertGenre);
 router.put("/genres/:id", updateGenre);
@@ -133,20 +144,20 @@ router.put("/genres/:id", updateGenre);
 //upload
 
 router.post(
-  "/upload/profilePicture",
+  "/artiste/create",
   uploadUserProfilePicture.single("userImage"),
   (req, res) => {
     return res.status(200).send("User Image Uploaded");
   }
 );
 
-router.post(
-  "/upload/albumCover",
-  uploadAlbumCover.single("albumCover"),
-  (req, res) => {
-    return res.status(200).send("Album Cover Uploaded");
-  }
-);
+  router.post(
+    "/upload/albumCover",
+    uploadAlbumCover.single("albumCover"),
+    (req, res) => {
+      return res.status(200).send("Album Cover Uploaded");
+    }, createArtist,
+  );
 
 router.post(
   "/upload/songCover",

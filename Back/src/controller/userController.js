@@ -4,7 +4,7 @@ const { insertUser, modifyUser, getUserById } = require("../model/userManager");
 async function getUsers(req, res) {
   try {
     const usersList = await users.findMany();
-    res.status(201).json(usersList);
+    res.status(200).json(usersList);
   } catch (err) {
     res.status(500).json({
       message:
@@ -35,7 +35,7 @@ async function createUser(req, res) {
       message:
         "Une erreur s'est produite lors de la création de l'utilisateur.",
       err,
-    });
+    }); 
   }
 }
 

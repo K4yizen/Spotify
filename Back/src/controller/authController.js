@@ -38,17 +38,18 @@ const login = async (req, res) => {
       // Récupérer les données de l'utilisateur sans le mot de passe
       const userData = getUserResult.data;
       delete userData.password;
+      console.log(userData);
   
       // Retourner les cookies et les données utilisateur
       return res
-        .cookie("token", token, {
-          httpOnly: true,
-        })
-        .cookie("user", userData, {
-          httpOnly: false,
-        })
-        .status(200)
-        .json({ message: "Login successful" });
+      .cookie("token", token, {
+        httpOnly: true,
+      })
+      .cookie("user", userData, {
+        httpOnly: false,
+      })
+      .status(200)
+      .json({ message: "Login successful" });
     } catch (err) {
       console.error(err);
       return res.sendStatus(500);
